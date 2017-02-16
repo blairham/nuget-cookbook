@@ -33,6 +33,6 @@ end
 
 remote_file win_friendly_path(::File.join(install_dir, 'nuget.exe')) do
   action :create
-  source node['nuget']['url'] % { version: format_version(node['nuget']['version']) }
+  source format(node['nuget']['url'], format_version(node['nuget']['version']))
   checksum lookup_checksum(node['nuget']['version'], node['nuget']['checksum'])
 end

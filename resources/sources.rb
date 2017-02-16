@@ -62,7 +62,7 @@ action :add do
       command [
         'nuget sources',
         current_value.nil? ? 'Add' : 'Update',
-        format_args(new_resource, :config_file, :name, :source)
+        format_args(new_resource, :config_file, :name, :source),
       ].join(' ')
     end
   end

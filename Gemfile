@@ -5,7 +5,7 @@ gem 'berkshelf',  '~> 4.0'
 gem 'stove',      '~> 3.2'
 
 group :test do
-  gem 'cookstyle',  '~> 0.0'
+  gem 'cookstyle',  '~> 1.3'
   gem 'chefspec',   '~> 4.4'
   gem 'foodcritic', '~> 7.0'
   gem 'rubocop',    '~> 0.39'

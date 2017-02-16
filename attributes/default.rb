@@ -17,6 +17,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['nuget']['url'] = 'https://dist.nuget.org/win-x86-commandline/%{version}/nuget.exe'
+default['nuget']['url'] = 'https://dist.nuget.org/win-x86-commandline/%s/nuget.exe'
 default['nuget']['version'] = 'latest'
 default['nuget']['install_dir'] = "#{ENV['ProgramFiles']}/NuGet"
