@@ -17,3 +17,6 @@ suites:
   - name: default
     run_list:
       - recipe[nuget_test::sources]
+    attributes:
+      nuget:
+        version: 3.4.3
