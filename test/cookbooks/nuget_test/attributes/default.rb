@@ -1,7 +1,7 @@
 #
 # Author:: Jonathan Morley (morley.jonathan@gmail.com)
-# Cookbook Name:: nuget
-# Recipe:: default
+# Cookbook Name:: nuget_test
+# Attribute:: default
 #
 # Copyright 2017, Jonathan Morley
 #
@@ -17,22 +17,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::Chef::Resource::RemoteFile.send(:include, Nuget::Helper)
-::Chef::Recipe.send(:include, Windows::Helper)
-
-install_dir = win_friendly_path(node['nuget']['install_dir'])
-
-directory install_dir do
-  action :create
-  recursive true
-end
-
-windows_path install_dir do
-  action :add
-end
-
-remote_file win_friendly_path(::File.join(install_dir, 'nuget.exe')) do
-  action :create
-  source node['nuget']['url'] % { version: format_version(node['nuget']['version']) }
-  checksum lookup_checksum(node['nuget']['version'], node['nuget']['checksum'])
-end
+default['nuget']['version'] = '3.4.3'

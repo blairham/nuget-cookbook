@@ -1,7 +1,7 @@
 #
 # Author:: Jonathan Morley (morley.jonathan@gmail.com)
-# Cookbook Name:: nuget
-# Recipe:: default
+# Cookbook Name:: nuget_test
+# Recipe:: sources
 #
 # Copyright 2017, Jonathan Morley
 #
@@ -17,22 +17,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::Chef::Resource::RemoteFile.send(:include, Nuget::Helper)
-::Chef::Recipe.send(:include, Windows::Helper)
+include_recipe 'nuget'
 
-install_dir = win_friendly_path(node['nuget']['install_dir'])
-
-directory install_dir do
-  action :create
-  recursive true
+nuget_sources 'repo1' do
+  action [:add, :enable]
+  source 'http://example.com/repo1'
 end
 
-windows_path install_dir do
-  action :add
+nuget_sources 'repo2' do
+  action [:add, :remove]
+  source 'http://example.com/repo2'
 end
 
-remote_file win_friendly_path(::File.join(install_dir, 'nuget.exe')) do
-  action :create
-  source node['nuget']['url'] % { version: format_version(node['nuget']['version']) }
-  checksum lookup_checksum(node['nuget']['version'], node['nuget']['checksum'])
+nuget_sources 'repo3' do
+  action [:add, :disable]
+  source 'http://example.com/repo3'
 end
