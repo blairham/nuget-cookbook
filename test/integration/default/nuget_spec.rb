@@ -2,7 +2,7 @@
 # author: Jonathan Morley (morley.jonathan@gmail.com)
 
 describe command('(Get-Command nuget).definition') do
-  its('stdout') { should eq 'C:\\Program Files\\NuGet\\nuget.exe' }
+  its('stdout') { should match /C:\\Program Files\\NuGet\\nuget.exe/ }
 end
 
 describe command('nuget') do
