@@ -19,8 +19,6 @@ platforms:
   - name: windows-10
     driver:
       box: inclusivedesign/windows10-eval
-  #- name: ubuntu-16.10
-  #- name: centos-7.2
 
 suites:
   - name: default
