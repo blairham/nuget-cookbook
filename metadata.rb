@@ -13,4 +13,4 @@ supports 'windows', '>= 6.1'
 
 depends 'windows'
 
-chef_gem 'nokogiri'
+gem 'nokogiri'
