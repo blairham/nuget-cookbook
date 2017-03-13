@@ -12,3 +12,5 @@ version '2.0.0'
 supports 'windows', '>= 6.1'
 
 depends 'windows'
+
+chef_gem 'nokogiri'
