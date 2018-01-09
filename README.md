@@ -11,17 +11,18 @@ and removing nuget sources.
 
 ### Platforms
 
-* Windows 8.1
+* Windows 10
 * Windows Server 2012 R2
-* Windows Server 2012 R2 Core
+* Windows Server 2016
 
 #### cookbooks
 
-* [chocolatey][0]
+* [windows](https://github.com/chef-cookbooks/windows)
 
 ## License and Authors
 
 * Author:: Blair Hamilton <blairham@me.com>
+* Author:: Jonathan Morley <morley.jonathan@gmail.com>
 
 ```text
 Copyright 2015, Blair Hamilton
@@ -38,5 +39,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
-[0]: https://github.com/chocolatey/chocolatey-cookbook

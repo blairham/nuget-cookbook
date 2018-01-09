@@ -16,10 +16,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[nuget::default]
-      - recipe[nuget_test::default]
+      - recipe[nuget_test::sources]
     attributes:
       nuget:
-        repositories:
-          name1: http://example.com/name1
-          name2: http://example.com/name2
+        version: 3.4.3

@@ -1,10 +1,9 @@
 #
-# Author:: Blair Hamilton (bhamilton@draftkings.com>)
 # Author:: Jonathan Morley (morley.jonathan@gmail.com>)
 # Cookbook Name:: nuget
 # Resource:: source
 #
-# Copyright 2015, Blair Hamilton
+# Copyright 2017, Jonathan Morley
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,65 +16,83 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-require 'chef/mixin/shell_out'
-include Chef::Mixin::ShellOut
+include Nuget::Helper
 
-property :name, kind_of: String, name_attribute: true
-property :config_file, kind_of: String, default: "#{ENV['PROGRAMDATA']}\\NuGet\\Config\\NuGet.config"
-property :source, kind_of: [String, nil]
+property :name, String, name_attribute: true
+property :scope, [:user, :machine], default: :machine
+property :config_file, String, identity: true, default: lazy { config_path(scope) }
+property :source, [String, nil], desired_state: false
+property :enabled, [true, false], desired_state: false
 
 default_action :add
 
 load_current_value do
-  cmd = shell_out('nuget sources list')
-  Chef::Log.debug("nuget sources list command output:\n#{cmd.stdout}")
-  regex = /\s*\d+\.\s+(?<name>#{name}) (?<enabled>\[Enabled\])?\s+(?<source>.+)/
+  require 'nokogiri'
 
-  if cmd.stderr.empty?
-    result = cmd.stdout.match(regex)
-    Chef::Log.debug("current_resource match output: #{result.inspect}")
-    source result[:source].strip if result
-  else
-    Chef::Log.warn("Failed to run nuget sources list. Error:\n#{cmd.stderr}")
-  end
+  current_value_does_not_exist! unless ::File.exist?(config_file)
+  config = ::File.open(config_file) { |f| Nokogiri::XML(f) }
+
+  config_source = config.xpath("/configuration/packageSources/add[@key='#{name}']").first
+  current_value_does_not_exist! if config_source.nil?
+
+  source config_source.attribute('value').text
+  enabled config.xpath("/configuration/disabledPackageSources/add[@key='#{name}' and @value='true']").empty?
+end
+
+action_class do
+  include Nuget::Helper
 end
 
 action :add do
-  converge_if_changed :source do
-    if config_file
-      directory ::File.dirname(config_file) do
-        action :create
-        recursive true
-      end
-
-      file config_file do
-        action :create_if_missing
-        content '<?xml version="1.0" encoding="utf-8"?><configuration />'
-      end
+  converge_if_changed do
+    directory ::File.dirname(config_file) do
+      action :create
+      recursive true
     end
 
-    nuget_cmd = 'nuget sources Add'
-    nuget_cmd << " -Name \"#{new_resource.name}\"" if new_resource.name
-    nuget_cmd << " -Source \"#{new_resource.source}\"" if new_resource.source
-    nuget_cmd << " -ConfigFile \"#{new_resource.config_file}\"" if new_resource.config_file
+    file config_file do
+      action :create_if_missing
+      rights :write, 'Everyone'
+      content '<?xml version="1.0" encoding="utf-8"?><configuration />'
+    end
 
-    execute 'add nuget source' do
+    execute "add nuget source (#{new_resource.name})" do
       action :run
-      command nuget_cmd
+      command [
+        'nuget sources',
+        current_value.nil? ? 'Add' : 'Update',
+        format_args(new_resource, :config_file, :name, :source),
+      ].join(' ')
     end
   end
 end
 
 action :remove do
-  nuget_cmd = 'nuget sources Remove'
-  nuget_cmd << " -Name \"#{new_resource.name}\"" if new_resource.name
-  nuget_cmd << " -Source \"#{new_resource.source}\"" if new_resource.source
-  nuget_cmd << " -ConfigFile \"#{new_resource.config_file}\"" if new_resource.config_file
-
-  execute 'remove nuget source' do
+  execute "remove nuget source (#{new_resource.name})" do
     action :run
-    command nuget_cmd
+    command "nuget sources Remove #{format_args(new_resource, :config_file, :name)}"
+  end unless current_value.nil?
+end
+
+action :enable do
+  new_resource.enabled = true
+
+  converge_if_changed :enabled do
+    execute "enable nuget source (#{new_resource.name})" do
+      action :run
+      command "nuget sources Enable #{format_args(new_resource, :config_file, :name)}"
+    end
+  end
+end
+
+action :disable do
+  new_resource.enabled = false
+
+  converge_if_changed :enabled do
+    execute "disable nuget source (#{new_resource.name})" do
+      action :run
+      command "nuget sources Disable #{format_args(new_resource, :config_file, :name)}"
+    end
   end
 end

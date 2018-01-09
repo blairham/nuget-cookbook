@@ -1,7 +1,7 @@
 #
 # Author:: Jonathan Morley (morley.jonathan@gmail.com)
-# Cookbook Name:: nuget
-# Attribute:: default
+# Cookbook Name:: nuget_test
+# Recipe:: sources
 #
 # Copyright 2017, Jonathan Morley
 #
@@ -17,6 +17,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['nuget']['url'] = 'https://dist.nuget.org/win-x86-commandline/%s/nuget.exe'
-default['nuget']['version'] = 'latest'
-default['nuget']['install_dir'] = "#{ENV['ProgramFiles']}/NuGet"
+include_recipe 'nuget'
+
+nuget_sources 'repo1' do
+  action [:add, :enable]
+  source 'http://example.com/repo1'
+end
+
+nuget_sources 'repo2' do
+  action [:add, :remove]
+  source 'http://example.com/repo2'
+end
+
+nuget_sources 'repo3' do
+  action [:add, :disable]
+  source 'http://example.com/repo3'
+end

@@ -1,9 +1,9 @@
 #
-# Author:: Blair Hamilton (blairham@me.com)
+# Author:: Jonathan Morley (morley.jonathan@gmail.com)
 # Cookbook Name:: nuget
 # Recipe:: default
 #
-# Copyright 2015, Blair Hamilton
+# Copyright 2017, Jonathan Morley
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,21 +17,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include_recipe 'chocolatey::default'
+::Chef::Resource::RemoteFile.send(:include, Nuget::Helper)
+::Chef::Recipe.send(:include, Windows::Helper)
 
-chocolatey 'nuget.commandline' do
-  action :install
-  notifies :run, 'ruby_block[add nuget to PATH]', :immediately
+install_dir = win_friendly_path(node['nuget']['install_dir'])
+
+directory install_dir do
+  action :create
+  recursive true
 end
 
-ruby_block 'add nuget to PATH' do
-  action :nothing
-  block { ENV['PATH'] += ";#{ENV['PROGRAMDATA']}\\chocolatey\\bin" }
+windows_path install_dir do
+  action :add
 end
 
-node['nuget']['repositories'].each do |name, source|
-  nuget_sources name do
-    action :add
-    source source
-  end
+remote_file win_friendly_path(::File.join(install_dir, 'nuget.exe')) do
+  action :create
+  source format(node['nuget']['url'], format_version(node['nuget']['version']))
+  checksum lookup_checksum(node['nuget']['version'], node['nuget']['checksum'])
 end

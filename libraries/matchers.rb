@@ -1,5 +1,6 @@
 #
 # Author:: Blair Hamilton (blairham@me.com)
+# Author:: Jonathan Morley (morley.jonathan@gmail.com)
 # Cookbook Name:: nuget
 #
 # Copyright 2015, Blair Hamilton
@@ -25,5 +26,13 @@ if defined?(ChefSpec)
 
   def remove_nuget_sources(resource)
     ChefSpec::Matchers::ResourceMatcher.new(:nuget_sources, :remove, resource)
+  end
+
+  def enable_nuget_sources(resource)
+    ChefSpec::Matchers::ResourceMatcher.new(:nuget_sources, :enable, resource)
+  end
+
+  def disable_nuget_sources(resource)
+    ChefSpec::Matchers::ResourceMatcher.new(:nuget_sources, :disable, resource)
   end
 end

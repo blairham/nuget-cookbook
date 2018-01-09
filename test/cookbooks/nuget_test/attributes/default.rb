@@ -1,6 +1,6 @@
 #
 # Author:: Jonathan Morley (morley.jonathan@gmail.com)
-# Cookbook Name:: nuget
+# Cookbook Name:: nuget_test
 # Attribute:: default
 #
 # Copyright 2017, Jonathan Morley
@@ -17,6 +17,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['nuget']['url'] = 'https://dist.nuget.org/win-x86-commandline/%s/nuget.exe'
-default['nuget']['version'] = 'latest'
-default['nuget']['install_dir'] = "#{ENV['ProgramFiles']}/NuGet"
+default['nuget']['version'] = '3.4.3'
