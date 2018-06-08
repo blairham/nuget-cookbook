@@ -57,13 +57,14 @@ action :add do
       content '<?xml version="1.0" encoding="utf-8"?><configuration />'
     end
 
+    cmd = ['nuget sources',
+           current_value.nil? ? 'Add' : 'Update',
+           format_args(new_resource, :config_file, :name, :source),
+          ].join(' ')
+
     execute "add nuget source (#{new_resource.name})" do
       action :run
-      command [
-        'nuget sources',
-        current_value.nil? ? 'Add' : 'Update',
-        format_args(new_resource, :config_file, :name, :source),
-      ].join(' ')
+      command cmd
     end
   end
 end

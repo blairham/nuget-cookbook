@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the nuget cookbook.
 
+## 2.0.1
+
+- Ensure command does Update
+
 ## 1.1.4
 
 - Added ChefSpec Matcher [Blair Hamilton]
