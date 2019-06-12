@@ -46,12 +46,12 @@ end
 
 action :add do
   converge_if_changed do
-    directory ::File.dirname(config_file) do
+    directory ::File.dirname(new_resource.config_file) do
       action :create
       recursive true
     end
 
-    file config_file do
+    file "#{new_resource.config_file}"  do
       action :create_if_missing
       rights :write, 'Everyone'
       content '<?xml version="1.0" encoding="utf-8"?><configuration />'
@@ -72,7 +72,7 @@ action :remove do
   execute "remove nuget source (#{new_resource.name})" do
     action :run
     command "nuget sources Remove #{format_args(new_resource, :config_file, :name)}"
-  end unless current_value.nil?
+  end
 end
 
 action :enable do
