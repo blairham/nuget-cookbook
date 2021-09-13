@@ -18,14 +18,16 @@
 
 include Windows::Helper
 
+require 'chef/util/path_helper'
+
 module Nuget
   module Helper
     def config_path(scope)
       case scope
       when :machine
-        win_friendly_path("#{ENV['ProgramData']}/NuGet/Config/NuGet.config")
+        Chef::Util::PathHelper.cleanpath("#{ENV['ProgramData']}/NuGet/Config/NuGet.config")
       when :user
-        win_friendly_path("#{ENV['AppData']}/NuGet/NuGet.config")
+        Chef::Util::PathHelper.cleanpath("#{ENV['AppData']}/NuGet/NuGet.config")
       else
         raise "Invalid scope (#{scope}) provided"
       end
